@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Love You ❤️</title>
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      height: 100vh;
+      overflow: hidden;
+      background: radial-gradient(circle at top, #0f2027, #203a43, #2c5364);
+      font-family: "Segoe UI", sans-serif;
+      color: white;
+    }
+
+    canvas {
+      position: absolute;
+      inset: 0;
+    }
+
+    .card {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(18px);
+      padding: 60px 80px;
+      border-radius: 30px;
+      text-align: center;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+      z-index: 10;
+      animation: appear 1.8s ease;
+    }
+
+    @keyframes appear {
+      from { opacity: 0; transform: translate(-50%, -50%) scale(0.85); }
+      to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    }
+
+    h1 {
+      font-size: 3.2rem;
+      margin-bottom: 20px;
+      background: linear-gradient(90deg, #ff758f, #ff9a9e, #fad0c4);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    p {
+      font-size: 1.3rem;
+      line-height: 1.7;
+    }
+
+    button {
+      margin-top: 28px;
+      padding: 15px 40px;
+      border: none;
+      border-radius: 35px;
+      font-size: 1.15rem;
+      cursor: pointer;
+      background: linear-gradient(135deg, #ff758f, #ff9a9e);
+      color: white;
+      transition: transform .25s, box-shadow .25s;
+    }
+
+    button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 15px 30px rgba(255,120,150,.45);
+    }
+
+    .love-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 3.2rem;
+      font-weight: 600;
+      color: #fff;
+      opacity: 0;
+      z-index: 5;
+      pointer-events: none;
+      text-shadow: 0 0 25px rgba(255,150,170,.9);
+      transition: opacity 2s ease;
+    }
+
+    .love-text.show {
+      opacity: 1;
+    }
+
+    @media (max-width: 600px) {
+    .card {
+        padding: 35px 25px;
+        width: 90%;
+    }
+
+    h1 {
+        font-size: 2.2rem;
+    }
+
+    p {
+        font-size: 1.1rem;
+    }
+
+    button {
+        font-size: 1rem;
+        padding: 12px 28px;
+    }
+
+    .love-text {
+        font-size: 2.4rem;
+        text-align: center;
+    }
+}
+
+  </style>
+</head>
+
+<body>
+
+<canvas id="canvas"></canvas>
+
+<div class="card" id="mainCard">
+  <h1>🎂 Joyeux Anniversaire Gracia ❤️</h1>
+  <p>
+    Que cette journée soit remplie de sourires ❤️<br>
+    clic ici 👇
+  </p>
+  <button onclick="startHeart()">❤️ Surprise</button>
+</div>
+
+<div class="love-text" id="loveText">Love you</div>
+
+<script>
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+  const card = document.getElementById("mainCard");
+  const loveText = document.getElementById("loveText");
+
+  function resize() {
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
+  }
+  addEventListener("resize", resize);
+  resize();
+
+  let t = 0;
+  let mode = "abstract";
+  let heartProgress = 0;
+  let beat = 0;
+
+  function drawAbstract() {
+    ctx.fillStyle = "rgba(15,32,39,0.25)";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    ctx.save();
+    ctx.translate(canvas.width/2, canvas.height/2);
+
+    for(let i=0;i<6;i++){
+      ctx.beginPath();
+      for(let a=0;a<Math.PI*2;a+=0.01){
+        const r = 150 + 40*Math.sin(a*3+t) + 30*Math.sin(a*5-t);
+        ctx.lineTo(
+          r*Math.cos(a+i),
+          r*Math.sin(a+i)
+        );
+      }
+      ctx.strokeStyle = `hsl(${t*60+i*60},100%,65%)`;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    ctx.restore();
+    t+=0.01;
+  }
+
+
+function drawHeart() {
+  ctx.fillStyle = "rgba(15,32,39,0.18)";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  ctx.save();
+  ctx.translate(canvas.width/2, canvas.height/2);
+
+  // 💓 battement
+  beat += 0.05;
+  const pulse = 1 + 0.06 * Math.sin(beat);
+
+  ctx.scale(pulse, pulse);
+
+  ctx.beginPath();
+  for(let a = 0; a < heartProgress; a += 0.02){
+    const x = 16 * Math.pow(Math.sin(a), 3);
+    const y = -(13 * Math.cos(a)
+              - 5 * Math.cos(2*a)
+              - 2 * Math.cos(3*a)
+              - Math.cos(4*a));
+    ctx.lineTo(x * 18, y * 18);
+  }
+
+  // ✨ halo vivant
+  ctx.strokeStyle = `hsl(${heartProgress * 40}, 100%, 70%)`;
+  ctx.lineWidth = 3 + 1.5 * Math.sin(beat);
+  ctx.shadowColor = "rgba(255,150,170,0.9)";
+  ctx.shadowBlur = 25 + 15 * Math.sin(beat);
+
+  ctx.stroke();
+  ctx.restore();
+
+  if (heartProgress < Math.PI * 2) {
+    heartProgress += 0.02;
+  }
+}
+
+  function animate(){
+    if(mode === "abstract") drawAbstract();
+    else drawHeart();
+    requestAnimationFrame(animate);
+  }
+  animate();
+
+  function startHeart(){
+    card.style.display = "none";        // cache le conteneur
+    mode = "heart";                     // active le cœur
+    heartProgress = 0;
+    setTimeout(() => loveText.classList.add("show"), 1200);
+  }
+</script>
+
+</body>
+</html>
