@@ -190,10 +190,18 @@ function drawHeart() {
 
   ctx.scale(pulse, pulse);
 
+  let xConst = 16;
+  let yConst = 13;
+  console.log(canvas.width);
+  if(canvas.width < 600){
+    xConst = 10;
+    yConst = 12;
+  }
+
   ctx.beginPath();
   for(let a = 0; a < heartProgress; a += 0.02){
-    const x = 16 * Math.pow(Math.sin(a), 3);
-    const y = -(13 * Math.cos(a)
+    const x = xConst * Math.pow(Math.sin(a), 3);
+    const y = -(yConst * Math.cos(a)
               - 5 * Math.cos(2*a)
               - 2 * Math.cos(3*a)
               - Math.cos(4*a));
